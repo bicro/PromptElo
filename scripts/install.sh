@@ -40,7 +40,7 @@ if [ ! -f "$PROMPTELO_DIR/config.json" ]; then
     echo "  → Creating default configuration..."
     cat > "$PROMPTELO_DIR/config.json" << 'EOF'
 {
-  "server_url": "https://promptelo-api.example.com",
+  "server_url": "https://promptelo-api.onrender.com",
   "user_id": null,
   "timeout": 5.0
 }
