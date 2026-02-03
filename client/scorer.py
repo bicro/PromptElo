@@ -245,48 +245,55 @@ def calculate_elo(scores: dict) -> int:
     return int(max(0, min(2400, elo)))
 
 
-def get_elo_tier(elo: int) -> str:
-    """Get the tier emoji for an Elo rating."""
+def get_elo_tier(elo: int) -> tuple[str, str]:
+    """Get the tier name and emoji for an Elo rating."""
     if elo >= 2200:
-        return "🏆"  # Grandmaster
+        return ("LEGENDARY", "🏆")
     elif elo >= 2000:
-        return "⭐"  # Master
+        return ("MASTER", "⭐")
     elif elo >= 1800:
-        return "🌟"  # Expert
+        return ("EXPERT", "🌟")
     elif elo >= 1500:
-        return "✨"  # Advanced
+        return ("SKILLED", "✨")
     elif elo >= 1200:
-        return "📝"  # Intermediate
+        return ("RISING", "📝")
     else:
-        return "📋"  # Beginner
+        return ("NOVICE", "📋")
 
 
-def get_novelty_label(percentile: float) -> str:
-    """Get a label for novelty percentile."""
+def get_novelty_label(percentile: float) -> tuple[str, str]:
+    """Get a label and emoji for novelty percentile."""
     if percentile >= 95:
-        return "Exceptional"
+        return ("LEGENDARY", "💎")
     elif percentile >= 85:
-        return "High"
+        return ("RARE", "🌟")
     elif percentile >= 70:
-        return "Above Avg"
+        return ("UNCOMMON", "✨")
     elif percentile >= 30:
-        return "Average"
+        return ("COMMON", "📊")
     else:
-        return "Common"
+        return ("FREQUENT", "📈")
 
 
 def format_badge(elo: int, novelty_percentile: Optional[float] = None) -> str:
-    """Format the Elo badge for display."""
-    tier = get_elo_tier(elo)
+    """Format the Elo badge with dramatic slot machine styling."""
+    tier_name, tier_emoji = get_elo_tier(elo)
+
+    # Build the dramatic badge
+    lines = []
+    lines.append("🎰 ━━━━━━━━━━━━━━━━━━━━━ 🎰")
+    lines.append(f"   {tier_emoji} {elo} • {tier_name} {tier_emoji}")
 
     if novelty_percentile is not None:
-        novelty_label = get_novelty_label(novelty_percentile)
+        novelty_name, novelty_emoji = get_novelty_label(novelty_percentile)
         if novelty_percentile >= 85:
-            return f"[PromptElo: {elo} {tier} | Top {100 - int(novelty_percentile)}% Novelty 🌟]"
+            lines.append(f"   {novelty_emoji} TOP {100 - int(novelty_percentile)}% • {novelty_name} {novelty_emoji}")
         else:
-            return f"[PromptElo: {elo} {tier} | Novelty: {novelty_label}]"
-    else:
-        return f"[PromptElo: {elo} {tier}]"
+            lines.append(f"   {novelty_emoji} Novelty: {novelty_name}")
+
+    lines.append("━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+    return "\n".join(lines)
 
 
 def analyze_prompt(prompt: str) -> dict:
