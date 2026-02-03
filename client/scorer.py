@@ -340,7 +340,7 @@ def main():
     """Main entry point for hook invocation.
 
     Reads JSON from stdin: {"prompt": "..."}
-    Outputs JSON: {"additionalContext": "[PromptElo: XXXX ...]"}
+    Outputs: Plain text badge (visible) + JSON additionalContext (for Claude)
     """
     try:
         # Read input from stdin
@@ -358,11 +358,13 @@ def main():
         # Analyze the prompt
         result = analyze_prompt(prompt)
 
-        # Output the badge as additional context
+        # Print badge as plain text (visible to user in transcript)
+        print(result["badge"])
+
+        # Also output JSON for Claude's context
         output = {
             "additionalContext": result["badge"]
         }
-
         print(json.dumps(output))
 
     except json.JSONDecodeError:
