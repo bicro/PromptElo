@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "promptelo",
-      "source": ".",
+      "source": "./",
       "description": "Automatic Elo badge on every prompt with 5-criteria scoring"
     }
   ]
