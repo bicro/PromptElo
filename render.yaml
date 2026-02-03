@@ -30,7 +30,7 @@ databases:
   # PostgreSQL with pgvector extension
   - name: promptelo-db
     region: oregon
-    plan: basic
+    plan: basic-256mb
     databaseName: promptelo
     postgresMajorVersion: "16"
     ipAllowList: []  # Allow all IPs (default)
