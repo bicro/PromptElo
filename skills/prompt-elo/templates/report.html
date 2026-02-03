@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptElo Analysis Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: var(--text-muted);
+        }
+
+        .elo-display {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .elo-score {
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .elo-tier {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .elo-tier .emoji {
+            font-size: 2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .score-label {
+            width: 100px;
+            font-weight: 500;
+        }
+
+        .score-bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 0 1rem;
+        }
+
+        .score-bar {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .score-bar.excellent { background: linear-gradient(90deg, var(--success), #4ade80); }
+        .score-bar.good { background: linear-gradient(90deg, var(--primary), #818cf8); }
+        .score-bar.average { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+        .score-bar.poor { background: linear-gradient(90deg, var(--danger), #f87171); }
+
+        .score-value {
+            width: 50px;
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .suggestions {
+            margin-bottom: 2rem;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            background: var(--bg-card);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .suggestion-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .suggestion-text h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .suggestion-text p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .global-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg);
+            border-radius: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .prompt-display {
+            background: var(--bg);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PromptElo Analysis</h1>
+            <p>Detailed scoring breakdown for your prompt</p>
+        </div>
+
+        <div class="elo-display">
+            <div class="elo-score" id="eloScore">{{ELO_SCORE}}</div>
+            <div class="elo-tier">
+                <span class="emoji">{{TIER_EMOJI}}</span>
+                <span>{{TIER_NAME}}</span>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2>Score Radar</h2>
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Score Breakdown</h2>
+                <div class="score-item">
+                    <span class="score-label">Clarity</span>
+                    <div class="score-bar-container">
+                        <div class="score-bar {{CLARITY_CLASS}}" style="width: {{CLARITY_PERCENT}}%"></div>
+                    </div>
+                    <span class="score-value">{{CLARITY_PERCENT}}%</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Specificity</span>
+                    <div class="score-bar-container">
+                        <div class="score-bar {{SPECIFICITY_CLASS}}" style="width: {{SPECIFICITY_PERCENT}}%"></div>
+                    </div>
+                    <span class="score-value">{{SPECIFICITY_PERCENT}}%</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Context</span>
+                    <div class="score-bar-container">
+                        <div class="score-bar {{CONTEXT_CLASS}}" style="width: {{CONTEXT_PERCENT}}%"></div>
+                    </div>
+                    <span class="score-value">{{CONTEXT_PERCENT}}%</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Creativity</span>
+                    <div class="score-bar-container">
+                        <div class="score-bar {{CREATIVITY_CLASS}}" style="width: {{CREATIVITY_PERCENT}}%"></div>
+                    </div>
+                    <span class="score-value">{{CREATIVITY_PERCENT}}%</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Novelty</span>
+                    <div class="score-bar-container">
+                        <div class="score-bar {{NOVELTY_CLASS}}" style="width: {{NOVELTY_PERCENT}}%"></div>
+                    </div>
+                    <span class="score-value">{{NOVELTY_PERCENT}}%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card suggestions">
+            <h2>Improvement Suggestions</h2>
+            {{SUGGESTIONS}}
+        </div>
+
+        <div class="card">
+            <h2>Global Statistics</h2>
+            <div class="global-stats">
+                <div class="stat-item">
+                    <div class="stat-value">{{GLOBAL_RANK}}</div>
+                    <div class="stat-label">Your Percentile</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{TOTAL_PROMPTS}}</div>
+                    <div class="stat-label">Total Prompts</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">{{AVG_NOVELTY}}</div>
+                    <div class="stat-label">Avg Novelty</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Analyzed Prompt</h2>
+            <div class="prompt-display">{{PROMPT_TEXT}}</div>
+        </div>
+
+        <div class="footer">
+            <p>Generated by <a href="https://github.com/promptelo/promptelo">PromptElo</a> • {{TIMESTAMP}}</p>
+        </div>
+    </div>
+
+    <script>
+        // Radar chart
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Clarity', 'Specificity', 'Context', 'Creativity', 'Novelty'],
+                datasets: [{
+                    label: 'Your Score',
+                    data: [{{CLARITY_SCORE}}, {{SPECIFICITY_SCORE}}, {{CONTEXT_SCORE}}, {{CREATIVITY_SCORE}}, {{NOVELTY_SCORE}}],
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                    borderColor: 'rgb(99, 102, 241)',
+                    pointBackgroundColor: 'rgb(99, 102, 241)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(99, 102, 241)'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(148, 163, 184, 0.2)'
+                        },
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.2)'
+                        },
+                        pointLabels: {
+                            color: '#f1f5f9',
+                            font: {
+                                size: 12
+                            }
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            backdropColor: 'transparent',
+                            stepSize: 0.2
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 1
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

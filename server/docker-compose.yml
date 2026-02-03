@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://promptelo:promptelo@db:5432/promptelo
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - RATE_LIMIT_REQUESTS=60
+      - RATE_LIMIT_WINDOW=60
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      - POSTGRES_USER=promptelo
+      - POSTGRES_PASSWORD=promptelo
+      - POSTGRES_DB=promptelo
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promptelo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:

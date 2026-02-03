@@ -1,0 +1,17 @@
+{
+  "$schema": "https://claude.ai/schemas/hooks.json",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.promptelo/client/scorer.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

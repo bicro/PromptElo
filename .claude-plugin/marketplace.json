@@ -1,0 +1,20 @@
+{
+  "name": "PromptElo",
+  "tagline": "Know your prompt quality with chess-style Elo ratings",
+  "description": "PromptElo analyzes every prompt you submit and displays an Elo rating indicating quality. Get detailed breakdowns of clarity, specificity, context, creativity, and novelty. Compare your prompts against a global database to see how unique your ideas are.",
+  "category": "productivity",
+  "icon": "📊",
+  "screenshots": [],
+  "features": [
+    "Automatic Elo badge on every prompt",
+    "5-criteria scoring (clarity, specificity, context, creativity, novelty)",
+    "Global novelty comparison via embeddings",
+    "Detailed HTML reports with radar charts",
+    "Improvement suggestions",
+    "Privacy-preserving (only embeddings stored, not prompts)"
+  ],
+  "requirements": [
+    "Python 3.10+",
+    "httpx library"
+  ]
+}
