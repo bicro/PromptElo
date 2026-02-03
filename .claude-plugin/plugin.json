@@ -1,6 +1,6 @@
 {
   "name": "promptelo",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Analyze and score your prompts with an Elo rating system",
   "author": {
     "name": "PromptElo"
