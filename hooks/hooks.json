@@ -1,6 +1,18 @@
 {
   "$schema": "https://claude.ai/schemas/hooks.json",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.promptelo/client/setup.py",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "matcher": "",

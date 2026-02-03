@@ -61,3 +61,16 @@ def get_timeout() -> float:
     """Get the configured request timeout."""
     config = get_config()
     return config.get("timeout", 5.0)
+
+
+def is_setup_complete() -> bool:
+    """Check if first-run setup has been completed."""
+    config = get_config()
+    return config.get("setup_complete", False)
+
+
+def mark_setup_complete() -> None:
+    """Mark first-run setup as complete."""
+    config = get_config()
+    config["setup_complete"] = True
+    save_config(config)
