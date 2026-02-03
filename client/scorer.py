@@ -358,12 +358,9 @@ def main():
         # Analyze the prompt
         result = analyze_prompt(prompt)
 
-        # Print badge as plain text (visible to user in transcript)
-        print(result["badge"])
-
-        # Also output JSON for Claude's context
+        # Output JSON with systemMessage (visible in normal mode)
         output = {
-            "additionalContext": result["badge"]
+            "systemMessage": result["badge"]
         }
         print(json.dumps(output))
 
