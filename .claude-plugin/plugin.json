@@ -1,32 +1,11 @@
 {
-  "$schema": "https://claude.ai/schemas/plugin.json",
   "name": "promptelo",
   "version": "0.1.0",
   "description": "Analyze and score your prompts with an Elo rating system",
-  "author": "PromptElo",
+  "author": {
+    "name": "PromptElo"
+  },
   "homepage": "https://github.com/promptelo/promptelo",
   "license": "MIT",
-  "keywords": ["prompts", "scoring", "elo", "analysis", "quality"],
-  "install": {
-    "hooks": "hooks/hooks.json",
-    "skills": "skills/",
-    "scripts": {
-      "post-install": "bash scripts/install.sh"
-    }
-  },
-  "configuration": {
-    "server_url": {
-      "type": "string",
-      "description": "URL of the PromptElo community server",
-      "default": "https://promptelo-api.example.com"
-    },
-    "user_id": {
-      "type": "string",
-      "description": "Optional user ID for tracking personal stats",
-      "default": null
-    }
-  },
-  "dependencies": {
-    "python": ">=3.10"
-  }
+  "keywords": ["prompts", "scoring", "elo", "analysis", "quality"]
 }

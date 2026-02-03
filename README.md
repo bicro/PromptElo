@@ -2,6 +2,18 @@
 
 A Claude Code extension that analyzes and scores user prompts with chess-style Elo ratings.
 
+## Installation
+
+```bash
+# Add the marketplace
+claude plugin marketplace add bicro/PromptElo
+
+# Install the plugin
+claude plugin install promptelo@promptelo
+```
+
+That's it! Elo badges will appear automatically on every prompt.
+
 ## Features
 
 - **Automatic Elo Badge**: Every prompt you submit gets an Elo rating displayed inline
@@ -9,28 +21,6 @@ A Claude Code extension that analyzes and scores user prompts with chess-style E
 - **Global Novelty Detection**: Compare your prompts against a community database using embeddings
 - **Detailed Reports**: Run `/prompt-elo` for visual HTML reports with radar charts
 - **Privacy-Preserving**: Only embeddings are stored, not raw prompts
-
-## Installation
-
-### Quick Install (Plugin)
-
-```bash
-# Install the PromptElo plugin
-claude plugin install promptelo
-```
-
-That's it! Elo badges will appear automatically on every prompt.
-
-### Manual Install
-
-```bash
-# Clone the repository
-git clone https://github.com/promptelo/promptelo
-cd promptelo
-
-# Run the install script
-./scripts/install.sh
-```
 
 ## Usage
 
